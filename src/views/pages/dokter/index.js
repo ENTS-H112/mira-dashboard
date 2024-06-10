@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import DataTableComponent from '../../../../src/components/DataTable'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '../../../../src/config/firestore'
 
 const columns = [
+  {
+    name: 'Foto Dokter',
+    cell: (row) => (
+      <img src={row.profile_picture} alt={row.nama} style={{ width: '50px', height: '50px' }} />
+    ),
+  },
   {
     name: 'Nama Dokter',
     selector: (row) => row.nama,
@@ -20,31 +29,32 @@ const columns = [
   },
 ]
 
-const data = [
-  {
-    id: 1,
-    nama: 'Dr. Ahmad',
-    spesialis: 'Dokter Radiologi',
-  },
-  {
-    id: 2,
-    nama: 'Dr. Ahmad',
-    spesialis: 'Dokter Radiologi',
-  },
-  {
-    id: 3,
-    nama: 'Dr. Ahmad',
-    spesialis: 'Dokter Radiologi',
-  },
-]
+const Dokter = () => {
+  const navigate = useNavigate()
+  const [data, setData] = useState([])
 
-const Jadwal = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const dataCollection = await getDocs(collection(db, 'dokter'))
+      const fetchedData = dataCollection.docs.map((doc) => {
+        const docData = doc.data()
+        return {
+          ...docData,
+          id: doc.id,
+        }
+      })
+
+      setData(fetchedData)
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <div>
-      <button className="btn btn-success text-white m-2">Tambah Dokter</button>
       <DataTableComponent columns={columns} data={data} />
     </div>
   )
 }
 
-export default Jadwal
+export default Dokter

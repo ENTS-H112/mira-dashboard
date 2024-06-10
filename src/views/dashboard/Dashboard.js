@@ -16,7 +16,9 @@ const columns = (navigate, reloadData) => [
     name: 'Jadwal Kunjungan',
     cell: (row) => (
       <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
-        {format(row.waktu.toDate(), 'PPPPpppp', { locale: id })}
+        {row.hari_kunjungan && row.tanggal_kunjungan
+          ? `${row.hari_kunjungan}, ${row.tanggal_kunjungan}`
+          : 'No date'}
       </div>
     ),
   },
@@ -26,7 +28,7 @@ const columns = (navigate, reloadData) => [
   },
   {
     name: 'Hasil Radiologi',
-    cell: (row) => row.hasil_radiologi,
+    cell: (row) => row.result,
   },
 ]
 

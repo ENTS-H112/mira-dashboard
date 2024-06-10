@@ -33,10 +33,20 @@ const columns = (navigate, reloadData) => [
     selector: (row) => row.nama_pasien,
   },
   {
-    name: 'Jadwal Kunjungan',
+    name: 'Tanggal Kunjungan',
     cell: (row) => (
       <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
-        {format(row.waktu.toDate(), 'PPPPpppp', { locale: id })}
+        {row.hari_kunjungan && row.tanggal_kunjungan
+          ? `${row.hari_kunjungan}, ${row.tanggal_kunjungan}`
+          : 'No date'}
+      </div>
+    ),
+  },
+  {
+    name: 'Jam Kunjungan',
+    cell: (row) => (
+      <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
+        {row.waktu ? format(row.waktu.toDate(), 'pppp', { locale: id }) : row.jam_kunjungan}
       </div>
     ),
   },

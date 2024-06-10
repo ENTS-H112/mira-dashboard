@@ -35,12 +35,19 @@ const Detail = () => {
           <CCard>
             <CCardHeader>{selectedData.nama_pasien}</CCardHeader>
             <CCardBody>
-              <CCardTitle>Status: {selectedData.status}</CCardTitle>
+              <CCardTitle>Status: {selectedData.status || 'Menunggu Konfirmasi'}</CCardTitle>
               <CCardText>No. Antrian: {selectedData.nomor_antrian}</CCardText>
               <CCardText>Nama Pasien: {selectedData.nama_pasien}</CCardText>
               <CCardText>Alamat: {selectedData.alamat}</CCardText>
               <CCardText>Usia: {selectedData.usia}</CCardText>
-              <CCardText>Jadwal Kunjungan: {selectedData.waktu.toDate().toString()}</CCardText>
+              <CCardText>Jenis Kelamin: {selectedData.gender}</CCardText>
+              <CCardText>
+                Jadwal Kunjungan:{' '}
+                {selectedData.waktu
+                  ? selectedData.waktu.toDate().toString()
+                  : selectedData.tanggal_kunjungan + ' ' + selectedData.jam_kunjungan}
+              </CCardText>
+              <CCardText>Email: {selectedData.email}</CCardText>
             </CCardBody>
           </CCard>
         </div>
