@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DataTableComponent from '../../components/DataTable'
 import BadgeStatus from '../../components/BadgeStatus'
-import { fetchData, updateDocument } from '../../../src/utils/firestoreUtils'
-import { showSuccessAlert, showDateInputAlert } from '../../../src/utils/alertUtils'
-import { format } from 'date-fns'
-import { id } from 'date-fns/locale'
+import { fetchData } from '../../../src/utils/firestoreUtils'
 
-const columns = (navigate, reloadData) => [
+const columns = () => [
   {
     name: 'Nama Pasien',
     selector: (row) => row.nama_pasien,
@@ -28,7 +25,7 @@ const columns = (navigate, reloadData) => [
   },
   {
     name: 'Hasil Radiologi',
-    cell: (row) => row.result,
+    cell: (row) => (row.result ? <a href={row.result}>Lihat</a> : 'Data belum tersedia'),
   },
 ]
 

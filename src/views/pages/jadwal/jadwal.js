@@ -53,6 +53,7 @@ const columns = (navigate, reloadData) => [
   {
     name: 'Status',
     cell: (row) => <BadgeStatus status={row.status} />,
+    sortable: true,
   },
   {
     name: 'Action',
@@ -87,7 +88,13 @@ const Jadwal = () => {
 
   const loadData = async () => {
     const fetchedData = await fetchData('pasien')
-    setData(fetchedData)
+    const filteredData = fetchedData.filter((row) => row.status !== 'Selesai')
+    const sortedData = filteredData.sort((a, b) => {
+      const dateA = new Date(a.tanggal_kunjungan + ' ' + a.jam_kunjungan)
+      const dateB = new Date(b.tanggal_kunjungan + ' ' + b.jam_kunjungan)
+      return dateA - dateB
+    })
+    setData(sortedData)
   }
 
   const reloadData = () => {

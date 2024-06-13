@@ -54,11 +54,14 @@ const Detail = () => {
             <CCardHeader>Hasil Pemeriksaan Radiologi</CCardHeader>
             <CCardBody>
               <CCardTitle>
-                Status: {''}
-                {selectedData.status === 'Selesai'
-                  ? selectedData.status_hasil
-                  : 'Belum ada hasil radiologi yang diinput'}
+                {selectedData.status_hasil ? 'Hasil sudah Tersedia' : 'Hasil belum Tersedia'}
               </CCardTitle>
+              <iframe
+                src={selectedData.result}
+                title="Hasil Radiologi"
+                width="100%"
+                height="600"
+              ></iframe>
             </CCardBody>
           </CCard>
         </div>
