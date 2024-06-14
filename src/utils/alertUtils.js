@@ -39,42 +39,35 @@ export const showConfirmAlert = async (title, text) => {
 }
 
 export const showDateInputAlert = async (title, inputLabel) => {
-  const { value: date } = await MySwal.fire({
+  let selectedDate = null
+
+  await MySwal.fire({
     title,
     html: (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <label>{inputLabel}</label>
-        <DateTimePickerWrapper />
-        <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center' }}>
-          <button
-            className="swal2-confirm swal2-styled"
-            onClick={() => {
-              const datePicker = document.querySelector('.react-datepicker__input-container input')
-              MySwal.clickConfirm()
-              return datePicker ? new Date(datePicker.value) : null
-            }}
-          >
-            OK
-          </button>
-          <button className="swal2-cancel swal2-styled" onClick={() => MySwal.clickCancel()}>
-            Cancel
-          </button>
-        </div>
+        <DateTimePickerWrapper setSelectedDate={(date) => (selectedDate = date)} />
       </div>
     ),
-    showCancelButton: false,
-    showConfirmButton: false,
+    showCancelButton: true,
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
     preConfirm: () => {
-      const datePicker = document.querySelector('.react-datepicker__input-container input')
-      return datePicker ? new Date(datePicker.value) : null
+      return selectedDate
     },
   })
 
-  return date
+  return selectedDate
 }
 
-const DateTimePickerWrapper = () => {
-  const [selectedDate, setSelectedDate] = useState(null)
+// eslint-disable-next-line react/prop-types
+const DateTimePickerWrapper = ({ setSelectedDate }) => {
+  const [selectedDate, setLocalSelectedDate] = useState(null)
 
-  return <DateTimePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+  const handleDateChange = (date) => {
+    setLocalSelectedDate(date)
+    setSelectedDate(date)
+  }
+
+  return <DateTimePicker selectedDate={selectedDate} setSelectedDate={handleDateChange} />
 }

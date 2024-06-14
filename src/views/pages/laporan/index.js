@@ -29,7 +29,7 @@ const columns = (navigate) => [
   },
 ]
 
-const Jadwal = () => {
+const Laporan = () => {
   const navigate = useNavigate()
   const [data, setData] = useState([])
 
@@ -52,11 +52,16 @@ const Jadwal = () => {
     fetchData()
   }, [])
 
+  const searchOptions = {
+    field: 'nama_pasien',
+    placeholder: 'Cari Nama Pasien',
+  }
+
   return (
     <div>
-      <DataTableComponent columns={columns(navigate)} data={data} />
+      <DataTableComponent columns={columns(navigate)} data={data} searchOptions={searchOptions} />
     </div>
   )
 }
 
-export default Jadwal
+export default Laporan

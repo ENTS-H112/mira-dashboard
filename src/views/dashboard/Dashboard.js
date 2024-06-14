@@ -4,7 +4,7 @@ import DataTableComponent from '../../components/DataTable'
 import BadgeStatus from '../../components/BadgeStatus'
 import { fetchData } from '../../../src/utils/firestoreUtils'
 
-const columns = () => [
+const columns = [
   {
     name: 'Nama Pasien',
     selector: (row) => row.nama_pasien,
@@ -29,7 +29,7 @@ const columns = () => [
   },
 ]
 
-const Jadwal = () => {
+const Dashboard = () => {
   const navigate = useNavigate()
   const [data, setData] = useState([])
 
@@ -38,19 +38,20 @@ const Jadwal = () => {
     setData(fetchedData)
   }
 
-  const reloadData = () => {
-    loadData()
-  }
-
   useEffect(() => {
     loadData()
   }, [])
 
+  const searchOptions = {
+    field: 'nama_pasien', // Sesuaikan dengan field yang ingin Anda cari
+    placeholder: 'Cari Nama Pasien', // Placeholder untuk input pencarian
+  }
+
   return (
     <div>
-      <DataTableComponent columns={columns(navigate, reloadData)} data={data} />
+      <DataTableComponent columns={columns} data={data} searchOptions={searchOptions} />
     </div>
   )
 }
 
-export default Jadwal
+export default Dashboard

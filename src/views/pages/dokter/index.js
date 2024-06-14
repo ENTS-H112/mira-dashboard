@@ -52,7 +52,11 @@ const Dokter = () => {
 
   return (
     <div>
-      <DataTableComponent columns={columns} data={data} />
+      <DataTableComponent
+        columns={columns}
+        data={data}
+        searchOptions={{ field: 'nama', placeholder: 'Cari Nama Dokter' }}
+      />
     </div>
   )
 }

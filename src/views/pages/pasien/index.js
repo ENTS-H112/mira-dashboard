@@ -30,32 +30,53 @@ const columns = (navigate) => [
   },
 ]
 
-const Jadwal = () => {
+const Pasien = () => {
   const navigate = useNavigate()
   const [data, setData] = useState([])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const dataCollection = await getDocs(collection(db, 'pasien'))
-      const fetchedData = dataCollection.docs.map((doc) => {
-        const docData = doc.data()
-        return {
-          ...docData,
-          id: doc.id,
-          status: docData.status || 'Menunggu Konfirmasi',
-        }
-      })
-      setData(fetchedData)
-    }
+  const loadData = async () => {
+    const dataCollection = await getDocs(collection(db, 'pasien'))
+    const fetchedData = dataCollection.docs.map((doc) => {
+      const docData = doc.data()
+      return {
+        ...docData,
+        id: doc.id,
+        status: docData.status || 'Menunggu Konfirmasi',
+      }
+    })
+    setData(fetchedData)
+  }
 
-    fetchData()
+  useEffect(() => {
+    loadData()
   }, [])
+
+  const filterOptions = {
+    field: 'status',
+    allLabel: 'Semua Status',
+    options: [
+      { value: 'Menunggu Konfirmasi', label: 'Menunggu Konfirmasi' },
+      { value: 'Konfirmasi', label: 'Konfirmasi' },
+      { value: 'Jadwal Ulang', label: 'Jadwal Ulang' },
+      { value: 'Selesai', label: 'Selesai' },
+    ],
+  }
+
+  const searchOptions = {
+    field: 'nama_pasien',
+    placeholder: 'Cari Nama Pasien',
+  }
 
   return (
     <div>
-      <DataTableComponent columns={columns(navigate)} data={data} />
+      <DataTableComponent
+        columns={columns(navigate)}
+        data={data}
+        filterOptions={filterOptions}
+        searchOptions={searchOptions}
+      />
     </div>
   )
 }
 
-export default Jadwal
+export default Pasien
