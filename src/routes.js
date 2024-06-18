@@ -1,6 +1,5 @@
 // src/routes.js
 import React from 'react'
-import PrivateRoute from './components/PrivateRoute'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Jadwal = React.lazy(() => import('./views/pages/jadwal/jadwal'))
@@ -16,7 +15,7 @@ const routes = [
     path: '/',
     exact: true,
     name: 'Home',
-    element: Dashboard,
+    element: Jadwal,
   },
   {
     path: '/dashboard',

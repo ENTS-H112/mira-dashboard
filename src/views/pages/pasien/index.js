@@ -36,7 +36,7 @@ const Pasien = () => {
 
   const loadData = async () => {
     const dataCollection = await getDocs(collection(db, 'pasien'))
-    const fetchedData = dataCollection.docs.map((doc) => {
+    let fetchedData = dataCollection.docs.map((doc) => {
       const docData = doc.data()
       return {
         ...docData,
@@ -44,6 +44,14 @@ const Pasien = () => {
         status: docData.status || 'Menunggu Konfirmasi',
       }
     })
+
+    // Sort data to put 'Selesai' status at the top
+    fetchedData = fetchedData.sort((a, b) => {
+      if (a.status === 'Selesai') return -1
+      if (b.status === 'Selesai') return 1
+      return 0
+    })
+
     setData(fetchedData)
   }
 

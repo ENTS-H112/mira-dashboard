@@ -148,6 +148,7 @@ const Jadwal = () => {
   const filterOptions = {
     field: 'status',
     allLabel: 'Semua Status',
+    default: 'Menunggu Konfirmasi',
     options: [
       { value: 'Konfirmasi', label: 'Konfirmasi' },
       { value: 'Jadwal Ulang', label: 'Jadwal Ulang' },

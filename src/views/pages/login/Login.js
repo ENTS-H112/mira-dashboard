@@ -95,8 +95,9 @@ const Login = () => {
                   <div>
                     <h2>MiRa Admin Dashboard</h2>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
+                      MIRA aims to revolutionize radiology services by providing seamless
+                      integration of image archiving technology PACS (Picture Archiving and
+                      Communication System)
                     </p>
                     <Link to="#">
                       <CButton color="primary" className="mt-3" active tabIndex={-1}>
