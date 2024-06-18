@@ -1,9 +1,9 @@
+import { collection, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import DataTableComponent from '../../../../src/components/DataTable'
-import { collection, getDocs } from 'firebase/firestore'
-import { db } from '../../../../src/config/firestore'
 import BadgeStatus from '../../../../src/components/BadgeStatus'
+import DataTableComponent from '../../../../src/components/DataTable'
+import { db } from '../../../../src/config/firestore'
 
 const columns = (navigate) => [
   {

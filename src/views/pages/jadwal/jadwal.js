@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import DataTableComponent from '../../../../src/components/DataTable'
-import BadgeStatus from '../../../../src/components/BadgeStatus'
-import { fetchData, updateDocument } from '../../../../src/utils/firestoreUtils'
-import { showSuccessAlert, showDateInputAlert } from '../../../../src/utils/alertUtils'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import BadgeStatus from '../../../../src/components/BadgeStatus'
+import DataTableComponent from '../../../../src/components/DataTable'
+import { showDateInputAlert, showSuccessAlert } from '../../../../src/utils/alertUtils'
+import { fetchData, updateDocument } from '../../../../src/utils/firestoreUtils'
 
 const confirmAppointment = async (id, reloadData) => {
   await updateDocument('pasien', id, { status: 'Konfirmasi' })
@@ -36,7 +36,7 @@ const columns = (navigate, reloadData) => [
     name: 'Jadwal Kunjungan',
     cell: (row) => (
       <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
-        {format(row.waktu.toDate(), 'PPPPpppp', { locale: id })}
+        {row.waktu ? format(row.waktu.toDate(), 'PPPPpppp', { locale: id }) : 'No date available'}
       </div>
     ),
   },

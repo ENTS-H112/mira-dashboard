@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { db } from '../../../../src/config/firestore'
 
 import { CCard, CCardBody, CCardHeader, CCardText, CCardTitle } from '@coreui/react'
@@ -12,13 +12,17 @@ const Detail = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const docRef = doc(db, 'pasien', id)
-      const docSnap = await getDoc(docRef)
+      try {
+        const docRef = doc(db, 'pasien', id)
+        const docSnap = await getDoc(docRef)
 
-      if (docSnap.exists()) {
-        setSelectedData({ ...docSnap.data(), id: docSnap.id })
-      } else {
-        console.log('No such document!')
+        if (docSnap.exists()) {
+          setSelectedData({ ...docSnap.data(), id: docSnap.id })
+        } else {
+          console.log('No such document!')
+        }
+      } catch (error) {
+        console.error('Error fetching document:', error)
       }
     }
 
@@ -40,7 +44,12 @@ const Detail = () => {
               <CCardText>Nama Pasien: {selectedData.nama_pasien}</CCardText>
               <CCardText>Alamat: {selectedData.alamat}</CCardText>
               <CCardText>Usia: {selectedData.usia}</CCardText>
-              <CCardText>Jadwal Kunjungan: {selectedData.waktu.toDate().toString()}</CCardText>
+              <CCardText>
+                Jadwal Kunjungan:
+                {selectedData.tanggal_kunjungan
+                  ? new Date(selectedData.tanggal_kunjungan).toDateString()
+                  : 'No date available'}
+              </CCardText>
             </CCardBody>
           </CCard>
         </div>
