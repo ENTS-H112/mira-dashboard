@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import {
@@ -26,6 +26,12 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    showErrorAlert(
+      'Email: admin@mira.com\n\nPassword: adminmira\n\nOnly for demo purposes. Please do not change or delete any data.',
+    )
+  }, [])
 
   const handleLogin = async () => {
     setHasAttemptedLogin(true)

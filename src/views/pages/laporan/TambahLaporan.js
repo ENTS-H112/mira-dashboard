@@ -1,6 +1,6 @@
 import { CButton } from '@coreui/react'
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -9,6 +9,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { v4 as uuidv4 } from 'uuid'
 import jsPDF from 'jspdf'
 import { db } from '../../../../src/config/firestore'
+import 'jspdf-autotable'
 
 const MySwal = withReactContent(Swal)
 
@@ -18,8 +19,28 @@ const TambahLaporan = () => {
   const [image, setImage] = useState(null)
   const [result, setResult] = useState(null)
   const [notes, setNotes] = useState('')
+  const [patientName, setPatientName] = useState('')
+  const [generatingPdf, setGeneratingPdf] = useState(false)
 
-  // Fungsi untuk menampilkan peringatan ketika pengguna ingin kembali
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      const docRef = doc(db, 'pasien', id)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const patientData = docSnap.data()
+        setPatientName(patientData.nama_pasien)
+      } else {
+        MySwal.fire({
+          title: 'Error',
+          text: 'Data pasien tidak ditemukan.',
+          icon: 'error',
+        })
+      }
+    }
+
+    fetchPatientData()
+  }, [id])
+
   const handleBackClick = () => {
     MySwal.fire({
       title: 'Anda yakin ingin kembali?',
@@ -35,60 +56,100 @@ const TambahLaporan = () => {
     })
   }
 
-  // Fungsi untuk mengubah nilai gambar saat pengguna memilih file
   const handleImageChange = (e) => {
     setImage(e.target.files[0])
   }
 
-  // Fungsi untuk mengubah catatan pengguna
   const handleNotesChange = (e) => {
     setNotes(e.target.value)
   }
 
-  // Fungsi untuk menghasilkan dan mengunggah PDF
-  const handleGenerateAndUploadPdf = async () => {
+  const handleGeneratePdf = async () => {
     const docRef = doc(db, 'pasien', id)
     const docSnap = await getDoc(docRef)
 
+    const docRefPredict = doc(db, 'predictions', id)
+    const docSnapPredict = await getDoc(docRefPredict)
+
     if (docSnap.exists()) {
       const patientData = docSnap.data()
+      const result = docSnapPredict.exists() ? docSnapPredict.data() : null
 
       const doc = new jsPDF()
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(18)
+      doc.text('MITRA RADIOLOGI', 105, 15, null, null, 'center')
 
       doc.setFontSize(12)
-      doc.text('Detail Pasien', 10, 10)
-      doc.text(`Nama: ${patientData.nama_pasien}`, 10, 20)
-      doc.text(`Umur: ${patientData.usia}`, 10, 30)
-      doc.text(`Jenis Kelamin: ${patientData.gender}`, 10, 40)
-      doc.text(`Alamat: ${patientData.alamat}`, 10, 50)
-      doc.text(`Jenis Periksa: ${patientData.jenis_periksa}`, 10, 60)
-      doc.text(`Waktu Kunjungan: ${patientData.tanggal_kunjungan}`, 10, 70)
+      doc.text('X-Ray | CT-Scan | MRI', 105, 22, null, null, 'center')
 
-      if (result) {
-        doc.text('Hasil Prediksi', 10, 90)
-        doc.text(`Explanation: ${result.explanation}`, 10, 100)
-        doc.text(`Suggestion: ${result.suggestion}`, 10, 110)
-        doc.text(`Confidence Score: ${result.confidenceScore}`, 10, 120)
-        doc.text(`Result: ${result.result}`, 10, 130)
-      }
+      doc.setFontSize(10)
+      doc.text(
+        'Revolutionizing Radiology Services with Blockchain and AI, BANGKIT ACADEMY 2024 BATCH 1',
+        105,
+        27,
+        null,
+        null,
+        'center',
+      )
+
+      doc.line(10, 30, 200, 30)
+
+      // Add patient information
+      doc.setFontSize(12)
+      doc.text(`${patientData.nama_pasien}`, 20, 40)
+      doc.text(`${patientData.no_hp}`, 150, 40)
+
+      doc.setFontSize(10)
+      doc.text(`${patientData.usia}`, 20, 45)
+      doc.text(`${patientData.email}`, 150, 45)
+
+      doc.text(`${patientData.gender}`, 20, 50)
+      doc.text(`${patientData.alamat}`, 150, 50)
+
+      doc.text(`${patientData.tanggal_kunjungan}`, 20, 55)
+      doc.text(`${patientData.nomor_antrian}`, 150, 55)
+
+      // Add scan type
+      doc.setFontSize(12)
+      doc.text(`${patientData.jenis_periksa}`, 105, 65, null, null, 'center')
+
+      // Add scan image
+      doc.addImage(`${result.imageUrl}`, 'JPEG', 20, 70, 50, 50)
+      doc.setFontSize(14)
+      doc.text('Hasil Prediksi', 20, 130)
+      doc.setFontSize(12)
+      doc.text(`Result: ${result.result}`, 20, 140)
+      doc.text(`confidenceScore: ${result.confidenceScore}`, 20, 150)
+      doc.text(`explanation: ${result.explanation}`, 20, 160)
+      doc.text(`suggestion: ${result.suggestion}`, 20, 170)
+
+      doc.text('Pesan:', 20, 190)
+      doc.text(
+        '• Tetap jaga kesehatan dan jangan lupa untuk selalu menjaga pola hidup sehat.',
+        20,
+        195,
+      )
+      doc.text('• Semua Hasil di-Generate menggunakan AI', 20, 200)
+
+      // Add footer with radiologists' information
+      doc.text('Thanks for Reference', 20, 210)
+      doc.text('****End of Report****', 105, 210, null, null, 'center')
+      doc.text('Radiologic Technologists', 20, 245)
+      doc.text('Dr. Payal Shah', 90, 245)
+      doc.text('Dr. Vimal Shah', 160, 245)
+      doc.text('(MSC, PGDM)', 20, 250)
+      doc.text('(MD, Radiologist)', 90, 250)
+      doc.text('(MD, Radiologist)', 160, 250)
+
+      // Footer information
+      doc.text(`Generated on: ${result.createdAt}`, 105, 260, null, null, 'center')
+      doc.text('Page 1 of 1', 200, 260, null, null, 'right')
 
       const pdfBlob = doc.output('blob')
 
-      const storage = getStorage()
-      const fileName = `result/${uuidv4()}.pdf`
-      const storageRef = ref(storage, fileName)
-
-      await uploadBytes(storageRef, pdfBlob)
-
-      const fileUrl = await getDownloadURL(storageRef)
-
-      await updateDoc(docRef, { result: fileUrl, status_hasil: true, status: 'Selesai' })
-
-      MySwal.fire({
-        title: 'PDF berhasil diunggah',
-        text: 'PDF telah berhasil diunggah ke server.',
-        icon: 'success',
-      })
+      // Automatically upload the generated PDF
+      handleUploadPdf(pdfBlob)
     } else {
       console.log('No such document!')
       MySwal.fire({
@@ -99,7 +160,41 @@ const TambahLaporan = () => {
     }
   }
 
-  // Fungsi untuk menangani pengajuan laporan
+  const handleUploadPdf = async (pdfBlob) => {
+    MySwal.fire({
+      title: 'Mengunggah PDF...',
+      text: 'Tunggu sebentar...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        MySwal.showLoading()
+      },
+    })
+
+    const docRef = doc(db, 'pasien', id)
+    const storage = getStorage()
+    const fileName = `result/${uuidv4()}.pdf`
+    const storageRef = ref(storage, fileName)
+
+    try {
+      await uploadBytes(storageRef, pdfBlob)
+      const fileUrl = await getDownloadURL(storageRef)
+
+      await updateDoc(docRef, { result: fileUrl, status_hasil: true, status: 'Selesai' })
+
+      MySwal.fire({
+        title: 'PDF berhasil diunggah',
+        text: 'Hasil prediksi telah berhasil diunggah ke server. Silakan cek di halaman Detail Pasien.',
+        icon: 'success',
+      })
+    } catch (error) {
+      MySwal.fire({
+        title: 'Error',
+        text: `Terjadi kesalahan saat mengunggah PDF: ${error.message}`,
+        icon: 'error',
+      })
+    }
+  }
+
   const handleSubmit = async () => {
     const formData = new FormData()
     formData.append('image', image)
@@ -107,7 +202,7 @@ const TambahLaporan = () => {
 
     MySwal.fire({
       title: 'Tunggu sebentar...',
-      text: 'Sedang memproses laporan Anda',
+      text: 'AI sedang memproses hasil pemeriksaan',
       allowOutsideClick: false,
       didOpen: () => {
         MySwal.showLoading()
@@ -135,10 +230,10 @@ const TambahLaporan = () => {
           <p><strong>Result:</strong> ${response.data.data.result}</p>
         `,
         icon: 'success',
-        confirmButtonText: 'Generate PDF',
+        confirmButtonText: 'Generate and sync PDF',
       }).then((result) => {
         if (result.isConfirmed) {
-          handleGenerateAndUploadPdf()
+          handleGeneratePdf()
         }
       })
     } catch (error) {
@@ -168,7 +263,7 @@ const TambahLaporan = () => {
 
   return (
     <div>
-      <h1>Tambah Laporan untuk Pasien ID: {id}</h1>
+      <h1>Tambah Laporan untuk Pasien: {patientName}</h1>
       <div className="form-group gap-2 d-flex flex-column">
         <label htmlFor="exampleFormControlTextarea1">Catatan</label>
         <textarea

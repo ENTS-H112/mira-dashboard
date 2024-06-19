@@ -5,13 +5,13 @@
   "homepage": ".",
   "license": "MIT",
   "author": "MiRA Team",
+  "proxy": "https://storage.googleapis.com/image-ml/images/",
   "scripts": {
     "build": "vite build",
     "lint": "eslint \"src/**/*.js\"",
     "serve": "vite preview",
     "start": "vite"
   },
-  "proxy": "https://expres-mira-ml-abwswzd4sa-et.a.run.app",
   "dependencies": {
     "@coreui/chartjs": "^4.0.0",
     "@coreui/coreui": "^5.0.0",
@@ -29,6 +29,7 @@
     "firebase": "^10.12.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-data-table-component": "^7.6.2",

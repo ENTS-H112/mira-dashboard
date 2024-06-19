@@ -3,6 +3,25 @@ import { useNavigate } from 'react-router-dom'
 import DataTableComponent from '../../components/DataTable'
 import BadgeStatus from '../../components/BadgeStatus'
 import { fetchData } from '../../../src/utils/firestoreUtils'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
+
+const handlePreviewResult = (row) => {
+  if (row.result) {
+    MySwal.fire({
+      title: 'Hasil Radiologi',
+      html: <iframe src={row.result} width="100%" height="500px" frameBorder="0" allowFullScreen />,
+    })
+  } else {
+    MySwal.fire({
+      title: 'Error',
+      text: 'Data belum tersedia',
+      icon: 'error',
+    })
+  }
+}
 
 const columns = [
   {
@@ -25,7 +44,19 @@ const columns = [
   },
   {
     name: 'Hasil Radiologi',
-    cell: (row) => (row.result ? <a href={row.result}>Lihat</a> : 'Data belum tersedia'),
+    cell: (row) =>
+      row.result ? (
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            handlePreviewResult()
+          }}
+        >
+          Lihat Hasil
+        </button>
+      ) : (
+        'Data belum tersedia'
+      ),
   },
 ]
 
@@ -43,8 +74,8 @@ const Dashboard = () => {
   }, [])
 
   const searchOptions = {
-    field: 'nama_pasien', // Sesuaikan dengan field yang ingin Anda cari
-    placeholder: 'Cari Nama Pasien', // Placeholder untuk input pencarian
+    field: 'nama_pasien',
+    placeholder: 'Cari Nama Pasien',
   }
 
   return (
