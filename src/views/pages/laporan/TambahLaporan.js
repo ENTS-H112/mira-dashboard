@@ -1,7 +1,7 @@
 import { CButton } from '@coreui/react'
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
@@ -281,6 +281,15 @@ const TambahLaporan = () => {
         <CButton color="danger" onClick={handleBackClick}>
           Kembali
         </CButton>
+        <p>Need a sample examination result file?</p>
+        <Link
+          to={
+            'https://drive.google.com/drive/folders/1IkVUS4JhxhPd0PnVjwMf5cMRS2_Cg319?usp=sharing'
+          }
+        >
+          {' '}
+          Sample Photo of a Brain Tumor
+        </Link>
       </div>
     </div>
   )
